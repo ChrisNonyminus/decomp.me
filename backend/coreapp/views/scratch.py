@@ -172,7 +172,7 @@ def create_scratch(data: Dict[str, Any], allow_project=False) -> Scratch:
     if given_platform:
         platform = platforms.from_id(given_platform)
 
-    compiler = compilers.from_id(data["compiler"])
+    compiler = compilers.from_id("powerpc-darwin-cross-cpp")
     project = data.get("project")
     rom_address = data.get("rom_address")
 
