@@ -17,7 +17,7 @@ from coreapp.flags import (
 
 from coreapp import platforms
 
-from coreapp.platforms import GBA, GC_WII, N64, NDS_ARM9, Platform, PS1, PS2, SWITCH
+from coreapp.platforms import DARWIN, GBA, GC_WII, N64, NDS_ARM9, Platform, PS1, PS2, SWITCH
 
 logger = logging.getLogger(__name__)
 
@@ -176,6 +176,19 @@ CLANG_401 = ClangCompiler(
             "-x c++ -O3 -g2 -std=c++1z -fno-rtti -fno-exceptions -Wall -Wextra -Wdeprecated -Wno-unused-parameter -Wno-unused-private-field -fno-strict-aliasing -Wno-invalid-offsetof -D SWITCH -D NNSDK -D MATCHING_HACK_NX_CLANG",
         ),
     ],
+)
+
+# DARWIN
+DARWIN_GCC401 = GCCCompiler(
+    id="powerpc-darwin-cross",
+    platform=DARWIN,
+    cc='"${COMPILER_DIR}"/powerpc-darwin-cross/bin/cc1 $COMPILER_FLAGS "$INPUT" -o "$OUTPUT" -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include/c++/4.0.0 -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include/c++/4.0.0/powerpc-apple-darwin8 -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include/gcc/darwin/3.3 | "${COMPILER_DIR}"/powerpc-darwin-cross/bin/as -o "$OUTPUT"'
+)
+
+DARWIN_GCC401_CPP = GCCCompiler(
+    id="powerpc-darwin-cross-cpp",
+    platform=DARWIN,
+    cc='"${COMPILER_DIR}"/powerpc-darwin-cross/bin/cc1plus $COMPILER_FLAGS "$INPUT" -o "$OUTPUT" -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include/c++/4.0.0 -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include/c++/4.0.0/powerpc-apple-darwin8 -I${COMPILER_DIR}/powerpc-darwin-cross/powerpc-apple-darwin/include/gcc/darwin/3.3 | "${COMPILER_DIR}"/powerpc-darwin-cross/bin/as -o "$OUTPUT"'
 )
 
 # PS1
@@ -661,6 +674,9 @@ _all_compilers: List[Compiler] = [
     MWCC_40_1034,
     MWCC_40_1036,
     MWCC_40_1051,
+    #DARWIN
+    DARWIN_GCC401,
+    DARWIN_GCC401_CPP,
 ]
 
 _compilers = OrderedDict({c.id: c for c in _all_compilers if c.available()})

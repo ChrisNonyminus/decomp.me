@@ -183,6 +183,21 @@ def download_gba():
         "agbccpp",
     )
 
+def download_ppc_darwin():
+    if host_os != LINUX:
+        return
+    download_zip(
+        url="https://github.com/ChrisNonyminus/powerpc-darwin-cross/releases/download/initial/powerpc-darwin-cross.new.zip",
+        dl_name="powerpc-darwin-cross.zip",
+        dest_name="powerpc-darwin-cross",
+        create_subdir=True,
+    )
+    download_zip(
+        url="https://github.com/ChrisNonyminus/powerpc-darwin-cross/releases/download/initial/powerpc-darwin-cross.new.zip",
+        dl_name="powerpc-darwin-cross.zip",
+        dest_name="powerpc-darwin-cross-cpp",
+        create_subdir=True,
+    )
 
 def download_switch():
     def dest_for_version(version: str) -> Path:
@@ -469,6 +484,8 @@ def main(args):
         download_nds()
     if should_download("ps1"):
         download_ps1()
+    if should_download("darwin"):
+        download_ppc_darwin()
     if should_download("switch"):
         download_switch()
     if should_download("wii_gc"):

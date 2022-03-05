@@ -129,6 +129,17 @@ PS2 = Platform(
 """,
 )
 
+DARWIN = Platform(
+    id="darwin",
+    name="Mac OS X",
+    description="PowerPC",
+    arch="ppc",
+    assemble_cmd='powerpc-darwin-cross/bin/as -o "$OUTPUT" "INPUT"',
+    objdump_cmd="",
+    nm_cmd="",
+    asm_prelude="",
+)
+
 GC_WII = Platform(
     id="gc_wii",
     name="GameCube / Wii",
@@ -298,5 +309,6 @@ _platforms: OrderedDict[str, Platform] = OrderedDict(
         "gc_wii": GC_WII,
         "nds_arm9": NDS_ARM9,
         "gba": GBA,
+        "darwin": DARWIN
     }
 )
