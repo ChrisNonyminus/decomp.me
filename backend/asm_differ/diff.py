@@ -1693,7 +1693,8 @@ class AsmProcessorI686(AsmProcessor):
 
         addr_imm = re.search(r"(?<!\$)0x[0-9a-f]+", args)
         if not addr_imm:
-            assert False, f"failed to find address immediate for line '{prev}'"
+            re.sub(r"(\$)0x[0-9a-f]+", repl, args)
+            return f"{mnemonic}\t{args}", repl
         start, end = addr_imm.span()
 
         if "R_386_NONE" in row:
@@ -1725,6 +1726,9 @@ class AsmProcessorI686(AsmProcessor):
         else:
             assert False, f"unknown relocation type '{row}' for line '{prev}'"
 
+        check_call = re.match(r"[0-9a-f]+ (<.*>|//.*$)", args)
+        if check_call:
+            args = re.sub(r"[0-9a-f]+ (<.*>|//.*$)", "", args)
         return f"{mnemonic}\t{args[:start]+repl+args[end:]}", repl
 
     def is_end_of_function(self, mnemonic: str, args: str) -> bool:
@@ -2018,7 +2022,7 @@ PPC_SETTINGS = ArchSettings(
 I686_SETTINGS = ArchSettings(
     name="i686",
     re_int=re.compile(r"[0-9]+"),
-    re_comment=re.compile(r"<.*>"),
+    re_comment=re.compile(r""),
     # Includes:
     #   - (e)a-d(x,l,h)
     #   - (e)s,d,b(i,p)(l)
@@ -2191,7 +2195,6 @@ def process(dump: str, config: Config) -> List[Line]:
         if pool_match:
             offset = pool_match.group(3).split(" ")[0][1:]
             data_pool_addr = int(offset, 16)
-
         m_comment = re.search(arch.re_comment, row)
         comment = m_comment[0] if m_comment else None
         row = re.sub(arch.re_comment, "", row)
@@ -2238,9 +2241,11 @@ def process(dump: str, config: Config) -> List[Line]:
         addr = ""
         if mnemonic in arch.instructions_with_address_immediates:
             row, addr = split_off_address(row)
-            # objdump prefixes addresses with 0x/-0x if they don't resolve to some
-            # symbol + offset. Strip that.
-            addr = addr.replace("0x", "")
+            # if it has "+" in the addr, it's likely a relocated offset. Replacing '0x' with '' for relocated offsets breaks the processor, so don't
+            if "+" not in addr:
+                # objdump prefixes addresses with 0x/-0x if they don't resolve to some
+                # symbol + offset. Strip that.
+                addr = addr.replace("0x", "")
 
         row = re.sub(arch.re_int, lambda m: hexify_int(row, m, arch), row)
         row += addr
@@ -2305,8 +2310,10 @@ def process(dump: str, config: Config) -> List[Line]:
                 capture = x86_longjmp.group(1)
                 if capture != "":
                     branch_target = int(capture, 16)
-            else:
+            elif "+" not in args.split(",")[-1]:
                 branch_target = int(args.split(",")[-1], 16)
+            else:
+                branch_target = int(args.split(",")[-1].split(" ")[0], 16)
 
         output.append(
             Line(
