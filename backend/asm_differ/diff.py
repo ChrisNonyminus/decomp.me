@@ -1416,7 +1416,7 @@ def dump_objfile(
     objdump_flags = [disassemble_flag, "-rz"]
     format_specifier = ""
     if object_format != "":
-        format_specifier = "-b %s" % object_format
+        format_specifier = f"-b{object_format}"
         objdump_flags = [disassemble_flag, "-rz", format_specifier]
     return (
         objfile,
@@ -1716,6 +1716,10 @@ class AsmProcessorI686(AsmProcessor):
         elif "R_386_32" in row:
             pass
         elif "R_386_OFFPC32" in row:
+            pass
+        elif "R_386_DISP32" in row:
+            pass
+        elif "R_386_dir32" in row:
             pass
         elif "R_386_PC32" in row:
             pass
