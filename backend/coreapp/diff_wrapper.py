@@ -58,7 +58,7 @@ class DiffWrapper:
             objfile="",
             make=False,
             source_old_binutils=True,
-            diff_section=".text",
+            diff_section="",
             inlines=False,
             max_function_size_lines=MAX_FUNC_SIZE_LINES,
             max_function_size_bytes=MAX_FUNC_SIZE_LINES * 4,
@@ -71,9 +71,10 @@ class DiffWrapper:
             show_branches=True,
             show_line_numbers=False,
             show_source=False,
-            stop_at_ret=False,
             ignore_large_imms=False,
             ignore_addr_diffs=True,
+            stop_at_ret=False,
+            reg_categories="",
             algorithm="levenshtein",
             reg_categories={},
         )
@@ -147,6 +148,9 @@ class DiffWrapper:
             )
 
             flags += config.arch.arch_flags
+
+            if platform.objdump_flags:
+                flags += [platform.objdump_flags]
 
             if platform.objdump_cmd:
                 try:

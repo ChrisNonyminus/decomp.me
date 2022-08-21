@@ -15,6 +15,8 @@ from coreapp.flags import (
     COMMON_GCC_PS1_FLAGS,
     COMMON_IDO_FLAGS,
     COMMON_MWCC_FLAGS,
+    COMMON_DOS_WATCOM_FLAGS,
+    COMMON_MSVC_FLAGS,
     Flags,
 )
 
@@ -23,6 +25,7 @@ from coreapp.platforms import (
     GC_WII,
     MACOS9,
     MACOSX,
+    MSDOS,
     N3DS,
     N64,
     NDS_ARM9,
@@ -30,6 +33,7 @@ from coreapp.platforms import (
     PS1,
     PS2,
     SWITCH,
+    WIN9X,
 )
 
 logger = logging.getLogger(__name__)
@@ -108,6 +112,16 @@ class ArmccCompiler(Compiler):
 
 
 @dataclass(frozen=True)
+class WatcomCompilerForDOS(Compiler):
+    flags: ClassVar[Flags] = COMMON_DOS_WATCOM_FLAGS
+
+
+@dataclass(frozen=True)
+class MSVCCompiler(Compiler):
+    flags: ClassVar[Flags] = COMMON_MSVC_FLAGS
+
+
+@dataclass(frozen=True)
 class GCCCompiler(Compiler):
     is_gcc: ClassVar[bool] = True
     flags: ClassVar[Flags] = COMMON_GCC_FLAGS
@@ -165,6 +179,28 @@ def preset_from_name(name: str) -> Optional[Preset]:
 
 
 DUMMY = DummyCompiler(id="dummy", platform=platforms.DUMMY, cc="")
+
+# ugly hacks for msdos and win9x
+
+# MSDOS (requires dosemu2)
+WCC_COPY_COMPILERS = 'cp -r "${COMPILER_DIR}"/* "${TMP_PATH}"'
+WCC_DOS = f'{WCC_COPY_COMPILERS}; LANG=en_US dosemu -K "$TMP_PATH"/ -E "WCC386.exe code.c -iH -foobject.o $COMPILER_FLAGS" -I "cpu_vm emulated cpu_vm_dpmi emulated" -t'
+WATCOM_901 = WatcomCompilerForDOS(
+    id="wcc9.01",
+    platform=MSDOS,
+    cc=WCC_DOS,
+)
+
+
+# WIN9X
+MSVC_COPY_COMPILERS = 'cp -r "${COMPILER_DIR}"/* "${TMP_PATH}" && cd ${TMP_PATH}'
+CL_WIN = f'{MSVC_COPY_COMPILERS}; printf "%s" "$COMPILER_FLAGS" | xargs -x -- $WINE ./CL.EXE /nologo /IINCLUDE/ /c /Foobject.o code.c'
+
+MSVC60 = MSVCCompiler(
+    id="msvc6.0",
+    platform=WIN9X,
+    cc=CL_WIN,
+)
 
 # GBA
 AGBCC = GCCCompiler(
@@ -413,6 +449,7 @@ PBX_GCC3 = GCCCompiler(
     platform=MACOSX,
     cc=GCC_CC1_ALT,
 )
+
 
 # GC_WII
 # Thanks to Gordon Davisson for the xargs trick:
@@ -744,6 +781,10 @@ _all_compilers: List[Compiler] = [
     XCODE_GCC400_C,
     XCODE_GCC400_CPP,
     PBX_GCC3,
+    # MSDOS
+    WATCOM_901,
+    # WIN9X
+    MSVC60,
 ]
 
 # MKWII Common flags

@@ -87,6 +87,17 @@ COMMON_MIPS_DIFF_FLAGS: Flags = [
     Checkbox("mreg_names=32", "-Mreg-names=32"),
 ]
 
+COMMON_DOS_WATCOM_FLAGS: Flags = [
+    Checkbox("watcom_od", "-od"),
+    Checkbox("watcom_os", "-os"),
+    Checkbox("watcom_ot", "-ot"),
+]
+
+COMMON_MSVC_FLAGS: Flags = [
+    FlagSet(id="msvc_opt_level", flags=["/O1", "/O2", "/Os", "/Ot", "/Od"]),
+    FlagSet(id="msvc_codegen", flags=["/G3", "/G4", "/G5", "/G6", "GB"]),
+]
+
 COMMON_MWCC_FLAGS: Flags = [
     FlagSet(
         id="mwcc_opt_level",
