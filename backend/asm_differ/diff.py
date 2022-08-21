@@ -119,6 +119,13 @@ if __name__ == "__main__":
         linked libraries.""",
     )
     parser.add_argument(
+        "--object_format",
+        dest="object_format",
+        default="",
+        metavar="OBJECT_FORMAT",
+        help="Specify the object format to be used in objdump.",
+    )
+    parser.add_argument(
         "-e",
         "--elf",
         dest="diff_elf_symbol",
@@ -1359,7 +1366,7 @@ def dump_elf(
         f"--disassemble={diff_elf_symbol}",
     ]
 
-    objdump_flags = [disassemble_flag, "-rz", "-j", config.diff_section]
+    objdump_flags = [disassemble_flag, "-rz"]
     return (
         project.myimg,
         (objdump_flags + flags1, project.baseimg, None),
@@ -1372,7 +1379,11 @@ def dump_elf(
 
 
 def dump_objfile(
-    start: str, end: Optional[str], config: Config, project: ProjectSettings
+    start: str,
+    end: Optional[str],
+    config: Config,
+    project: ProjectSettings,
+    object_format: str,
 ) -> Tuple[str, ObjdumpCommand, ObjdumpCommand]:
     if config.base_shift:
         fail("--base-shift not compatible with -o")
@@ -1402,8 +1413,11 @@ def dump_objfile(
         disassemble_flag = "-D"
     else:
         disassemble_flag = "-d"
-
-    objdump_flags = [disassemble_flag, "-rz", "-j", config.diff_section]
+    objdump_flags = [disassemble_flag, "-rz"]
+    format_specifier = ""
+    if object_format != "":
+        format_specifier = "-b %s" % object_format
+        objdump_flags = [disassemble_flag, "-rz", format_specifier]
     return (
         objfile,
         (objdump_flags, refobjfile, start),
@@ -1679,6 +1693,8 @@ class AsmProcessorI686(AsmProcessor):
         if "R_386_NONE" in row:
             pass
         elif "R_386_32" in row:
+            pass
+        elif "R_386_OFFPC32" in row:
             pass
         elif "R_386_PC32" in row:
             pass
@@ -3254,7 +3270,7 @@ def main() -> None:
         )
     elif config.diff_obj:
         make_target, basecmd, mycmd = dump_objfile(
-            args.start, args.end, config, project
+            args.start, args.end, config, project, args.object_format
         )
     else:
         make_target, basecmd, mycmd = dump_binary(args.start, args.end, config, project)
