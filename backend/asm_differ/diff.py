@@ -2142,6 +2142,7 @@ def process(dump: str, config: Config) -> List[Line]:
     stop_after_delay_slot = False
     lines = dump.split("\n")
     while i < len(lines):
+        line_idx = i
         row = lines[i]
         i += 1
 
@@ -2256,7 +2257,8 @@ def process(dump: str, config: Config) -> List[Line]:
             else:
                 break
             i += 1
-
+        if ":" in row:
+            continue
         normalized_original = processor.normalize(mnemonic, original)
 
         scorable_line = normalized_original

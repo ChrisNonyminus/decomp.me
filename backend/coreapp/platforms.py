@@ -1,5 +1,7 @@
 import logging
+import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import OrderedDict
 
 from coreapp.flags import COMMON_MIPS_DIFF_FLAGS, Flags
@@ -18,6 +20,7 @@ class Platform:
     objdump_cmd: str
     nm_cmd: str
     asm_prelude: str
+    objdump_flags: str = None
     diff_flags: Flags = field(default_factory=list, hash=False)
     supports_objdump_disassemble: bool = False  # TODO turn into objdump flag
 
@@ -49,6 +52,46 @@ SWITCH = Platform(
     nm_cmd="aarch64-linux-gnu-nm",
     asm_prelude="",
     supports_objdump_disassemble=True,
+)
+
+I386_COMMON_PATH: Path = (
+    Path(os.path.dirname(os.path.realpath(__file__)))
+    / ".."
+    / "compilers"
+    / "i386_common"
+)
+
+MSDOS = Platform(
+    id="msdos",
+    name="MS-DOS",
+    description="x86",
+    arch="i686",
+    assemble_cmd=f'{I386_COMMON_PATH}/jwasm -coff -c -Fo"$OUTPUT" "$INPUT"',
+    objdump_cmd=f"{I386_COMMON_PATH}/objdump",
+    objdump_flags="--no-show-raw-insn -b coff-go32 ",
+    nm_cmd="echo",
+    asm_prelude="""
+        .386
+    """,
+)
+WINE: str
+if "microsoft" in os.uname().release.lower():
+    WINE = ""
+else:
+    WINE = "wine"
+WIN9X = Platform(
+    id="win9x",
+    name="Microsoft Windows",
+    description="x86",
+    arch="i686",
+    assemble_cmd=f'{I386_COMMON_PATH}/jwasm -coff -c -Fo"$OUTPUT" "$INPUT"',
+    objdump_cmd=f"{I386_COMMON_PATH}/objdump",
+    objdump_flags="--no-show-raw-insn -b pe-i386",
+    nm_cmd="echo",
+    asm_prelude="""
+        .386P
+        .model FLAT
+    """,
 )
 
 N64 = Platform(
@@ -533,6 +576,8 @@ _platforms: OrderedDict[str, Platform] = OrderedDict(
         "gba": GBA,
         "macos9": MACOS9,
         "macosx": MACOSX,
+        "msdos": MSDOS,
         "n3ds": N3DS,
+        "win9x": WIN9X,
     }
 )

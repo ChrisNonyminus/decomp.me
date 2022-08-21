@@ -154,7 +154,10 @@ class CompilerWrapper:
             # IDO hack to support -KPIC
             if compiler.is_ido and "-KPIC" in compiler_flags:
                 cc_cmd = cc_cmd.replace("-non_shared", "")
-
+            wine = WINE
+            if "msvc" in compiler.id:
+                # have to renable wine or else CL.exe complains if it's ran in the tmp folder
+                wine = "wine"
             # Run compiler
             try:
                 compile_proc = sandbox.run_subprocess(
@@ -163,14 +166,18 @@ class CompilerWrapper:
                     shell=True,
                     env={
                         "PATH": PATH,
-                        "WINE": WINE,
+                        "WINE": wine,
+                        "HOME": str(object_path.parent),
                         "WIBO": WIBO,
                         "INPUT": sandbox.rewrite_path(code_path),
+                        "INPUT_FILENAME": code_path.name,
                         "OUTPUT": sandbox.rewrite_path(object_path),
+                        "OUTPUT_FILENAME": object_path.name,
                         "COMPILER_DIR": sandbox.rewrite_path(compiler.path),
                         "COMPILER_FLAGS": sandbox.quote_options(compiler_flags),
                         "FUNCTION": function,
                         "MWCIncludes": "/tmp",
+                        "TMP_PATH": str(object_path.parent),
                         "TMPDIR": "/tmp",
                     },
                 )
