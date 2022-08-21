@@ -2328,8 +2328,18 @@ def process(dump: str, config: Config) -> List[Line]:
         num_instr += 1
         source_lines = []
 
-        if config.stop_at_ret and processor.is_end_of_function(mnemonic, args):
-            break
+        if config.stop_at_ret:
+            if config.arch.name == "mips":
+                if mnemonic == "jr" and args == "ra":
+                    stop_after_delay_slot = True
+                elif stop_after_delay_slot:
+                    break
+            if config.arch.name == "ppc":
+                if mnemonic == "blr":
+                    break
+            if config.arch.name == "i686":
+                if mnemonic == "ret":
+                    break
 
     processor.post_process(output)
     return output
