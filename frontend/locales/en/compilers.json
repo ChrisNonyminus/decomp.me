@@ -77,6 +77,11 @@
     "psyq4.3": "PSYQ4.3 (gcc 2.8.1)",
     "psyq4.6": "PSYQ4.6 (gcc 2.95.2)",
     "wcc9.01": "Watcom C 386 Optimizing Compiler 9.01",
+    "wcc10.0a": "Watcom C32 Optimizing Compiler 10.0a",
+    "wcc10.5": "Watcom C32 Optimizing Compiler 10.5",
+    "wcc10.6": "Watcom C32 Optimizing Compiler 10.6",
+    "wcc11.0": "Watcom C32 Optimizing Compiler 11.0",
+    "wcc11.0a": "Watcom C32 Optimizing Compiler 11.0a",
     "msvc6.0": "Microsoft Visual C/C++ 6.0",
 
     "watcom_od": "No optimization",

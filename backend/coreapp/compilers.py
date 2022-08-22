@@ -179,6 +179,13 @@ WATCOM_901 = WatcomCompilerForDOS(
     cc=WCC_DOS,
 )
 
+WATCOM_100A_C = WatcomCompilerForDOS(id="wcc10.0a", platform=MSDOS, cc=WCC_DOS)
+
+WATCOM_105_C = WatcomCompilerForDOS(id="wcc10.5", platform=MSDOS, cc=WCC_DOS)
+WATCOM_106_C = WatcomCompilerForDOS(id="wcc10.6", platform=MSDOS, cc=WCC_DOS)
+
+WATCOM_11_C = WatcomCompilerForDOS(id="wcc11.0", platform=MSDOS, cc=WCC_DOS)
+WATCOM_11A_C = WatcomCompilerForDOS(id="wcc11.0a", platform=MSDOS, cc=WCC_DOS)
 
 # WIN9X
 MSVC_COPY_COMPILERS = 'cp -r "${COMPILER_DIR}"/* "${TMP_PATH}" && cd ${TMP_PATH}'
@@ -743,6 +750,11 @@ _all_compilers: List[Compiler] = [
     PBX_GCC3,
     # MSDOS
     WATCOM_901,
+    WATCOM_100A_C,
+    WATCOM_11_C,
+    WATCOM_105_C,
+    WATCOM_106_C,
+    WATCOM_11A_C,
     # WIN9X
     MSVC60,
 ]
@@ -992,6 +1004,8 @@ _all_presets = [
     # MACOSX
     Preset("Fallout 2", PBX_GCC3, "-std=c99 -fPIC -O1 -g3"),
     Preset("The Sims 2", XCODE_GCC400_CPP, "-g3 -O1"),
+    # MSDOS
+    Preset("Daggerfall", WATCOM_11_C, "-ox -od -of"),
 ]
 
 
