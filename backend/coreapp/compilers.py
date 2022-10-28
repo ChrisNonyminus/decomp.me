@@ -201,7 +201,7 @@ WATCOM_11A_C = WatcomCompilerForDOS(id="wcc11.0a", platform=MSDOS, cc=WCC_DOS)
 
 # WIN9X
 MSVC_COPY_COMPILERS = 'cp -r "${COMPILER_DIR}"/* "${TMP_PATH}" && cd ${TMP_PATH}'
-CL_WIN = f'{MSVC_COPY_COMPILERS}; printf "%s" "$COMPILER_FLAGS" | xargs -x -- $WINE ./CL.EXE /nologo /IINCLUDE/ /c /Foobject.o code.c'
+CL_WIN = 'printf "%s" "$COMPILER_FLAGS /nologo /I"${COMPILER_DIR}"/INCLUDE/ /c /Fo"Z:"$OUTPUT"" "Z:"$INPUT""" | xargs -x -- ${WINE} "${COMPILER_DIR}"/CL.EXE'
 
 MSVC60 = MSVCCompiler(
     id="msvc6.0",

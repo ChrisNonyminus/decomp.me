@@ -95,7 +95,7 @@ COMMON_DOS_WATCOM_FLAGS: Flags = [
 
 COMMON_MSVC_FLAGS: Flags = [
     FlagSet(id="msvc_opt_level", flags=["/O1", "/O2", "/Os", "/Ot", "/Od"]),
-    FlagSet(id="msvc_codegen", flags=["/G3", "/G4", "/G5", "/G6", "GB"]),
+    FlagSet(id="msvc_codegen", flags=["/G3", "/G4", "/G5", "/G6", "/GB"]),
 ]
 
 COMMON_MWCC_FLAGS: Flags = [
