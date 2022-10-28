@@ -74,7 +74,6 @@ class DiffWrapper:
             ignore_large_imms=False,
             ignore_addr_diffs=True,
             stop_at_ret=False,
-            reg_categories="",
             algorithm="levenshtein",
             reg_categories={},
         )
