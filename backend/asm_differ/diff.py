@@ -2313,9 +2313,7 @@ def process(dump: str, config: Config) -> List[Line]:
             row = normalize_imms(row, arch)
 
         branch_target = None
-        if (
-            mnemonic in arch.branch_instructions or is_text_relative_j
-        ) and symbol is None:
+        if (mnemonic in arch.branch_instructions) and symbol is None:
             x86_longjmp = re.search(r"\*(.*)\(", args)
             if x86_longjmp:
                 capture = x86_longjmp.group(1)
