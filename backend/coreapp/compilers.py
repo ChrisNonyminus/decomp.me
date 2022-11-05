@@ -184,7 +184,7 @@ DUMMY = DummyCompiler(id="dummy", platform=platforms.DUMMY, cc="")
 
 # MSDOS (requires dosemu2 in https://code.launchpad.net/~dosemu2/+archive/ubuntu/ppa)
 WCC_COPY_COMPILERS = 'cp -r "${COMPILER_DIR}"/* "${TMP_PATH}"'
-WCC_DOS = f'{WCC_COPY_COMPILERS}; LANG=en_US dosemu -K "$TMP_PATH"/ -E "WCC386.exe code.c -iH -foobject.o $COMPILER_FLAGS" -I "cpu_vm emulated cpu_vm_dpmi emulated" -t'
+WCC_DOS = f'{WCC_COPY_COMPILERS}; LANG=en_US dosemu -K "$TMP_PATH"/ -E "WCC386.exe code.c -i=H -foobject.o $COMPILER_FLAGS" -I "cpu_vm emulated cpu_vm_dpmi emulated" -t -quiet'
 WATCOM_901 = WatcomCompilerForDOS(
     id="wcc9.01",
     platform=MSDOS,
