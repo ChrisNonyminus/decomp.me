@@ -94,8 +94,18 @@ COMMON_DOS_WATCOM_FLAGS: Flags = [
 ]
 
 COMMON_MSVC_FLAGS: Flags = [
-    FlagSet(id="msvc_opt_level", flags=["/O1", "/O2", "/Os", "/Ot", "/Od"]),
-    FlagSet(id="msvc_codegen", flags=["/G3", "/G4", "/G5", "/G6", "/GB"]),
+    FlagSet(
+        id="msvc_opt_level", flags=["/Od", "/O1", "/O2", "/Os", "/Ot", "/Og", "/Ox"]
+    ),
+    FlagSet(id="msvc_codegen", flags=["/GB", "/G3", "/G4", "/G5", "/G6"]),
+    Checkbox("msvc_compile_cpp", "/TP"),
+    Checkbox("msvc_use_rtti", "/GR"),
+    Checkbox("msvc_use_ehsc", "/GX"),
+    Checkbox("msvc_disable_stack_checking", "/Gs"),
+    Checkbox("msvc_runtime_debug_checks", "/GZ"),
+    Checkbox("msvc_cdecl", "/Gd"),
+    Checkbox("msvc_fastcall", "/Gr"),
+    Checkbox("msvc_stdcall", "/Gz"),
 ]
 
 COMMON_MWCC_FLAGS: Flags = [
